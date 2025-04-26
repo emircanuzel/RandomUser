@@ -1,0 +1,139 @@
+//
+//  UserListCollectionViewManager.swift
+//  RandomUser
+//
+//  Created by emircan.uzel on 25.04.2025.
+//
+
+import Foundation
+import UIKit
+
+// MARK: - UserListCollectionViewManager
+
+class UserListCollectionViewManager: NSObject, UICollectionViewDelegate {
+    private let collectionView: UICollectionView
+    private let delegate: UserListPresenter
+    private lazy var dataSource = UserListCollectionViewDataSource(collectionView: collectionView, delegate: delegate)
+    private lazy var listLayout = UserListLayoutMaker(dataSource: dataSource)
+    var currentUsers: [UserListCellPresentationModel] = []
+    private var deletedUsers: Set<UserListCellPresentationModel> = []
+
+    init(
+        collectionView: UICollectionView,
+        delegate: UserListPresenter
+    ) {
+        self.collectionView = collectionView
+        self.delegate = delegate
+        super.init()
+
+        setDelegate()
+        setLayout()
+    }
+    
+    func createSnapshot(with response: UserListResponse) {
+        var snapshot = UserListSnapshot()
+        manageResponse(on: &snapshot, using: response)
+        dataSource.apply(snapshot)
+    }
+
+    func deleteUser(_ user: UserListCellPresentationModel) {
+        deletedUsers.insert(user)
+        currentUsers.removeAll { $0 == user }
+        updateSnapshot()
+    }
+
+    func updateSnapshot() {
+        var snapshot = UserListSnapshot()
+        let userItems: [UserListCellType] = currentUsers.map({ .listItemCell($0) })
+        if snapshot.sectionIdentifiers.isEmpty {
+            snapshot.appendSections([.sectionList])
+        }
+        snapshot.appendItems(userItems, toSection: .sectionList)
+        dataSource.apply(snapshot)
+    }
+
+    func searchUser(filteredUsers: [UserListCellPresentationModel]?) {
+        guard let filteredUsers, !filteredUsers.isEmpty else { return }
+        var snapshot = UserListSnapshot()
+        let userItems: [UserListCellType] = filteredUsers.map({ .listItemCell($0) })
+        if snapshot.sectionIdentifiers.isEmpty {
+            snapshot.appendSections([.sectionList])
+        }
+        snapshot.appendItems(userItems, toSection: .sectionList)
+        dataSource.apply(snapshot)
+    }
+}
+
+// MARK: Generating Snapshot
+extension UserListCollectionViewManager {
+    private func manageResponse(
+        on snapshot: inout UserListSnapshot,
+        using response: UserListResponse
+    ) {
+        guard let userList = response.results, !userList.isEmpty else { return }
+        generateOrderListSection(on: &snapshot, with: userList)
+    }
+
+    private func generateOrderListSection(
+        on snapshot: inout UserListSnapshot,
+        with userList: [User]
+    ) {
+        updateUsers(with: userList)
+        let userItems: [UserListCellType] = currentUsers.map({ .listItemCell($0) })
+        if snapshot.sectionIdentifiers.isEmpty {
+            snapshot.appendSections([.sectionList])
+        }
+        snapshot.appendItems(userItems, toSection: .sectionList)
+    }
+
+    private func updateUsers(with newUsers: [User]) {
+        let presentationModels = newUsers.map({ UserListCellPresentationModel(model: $0) })
+        let filteredPresentationModels = presentationModels.filter { !deletedUsers.contains($0) }
+        currentUsers.append(contentsOf: filteredPresentationModels)
+        currentUsers = currentUsers.unique()
+    }
+}
+
+// MARK: Helpers
+extension UserListCollectionViewManager {
+    private func setDelegate() {
+        self.collectionView.delegate = self
+    }
+    
+    private func setLayout() {
+        collectionView.collectionViewLayout.invalidateLayout()
+        collectionView.setCollectionViewLayout(listLayout.create(), animated: true)
+    }
+    
+    func currentSnapshot() -> UserListSnapshot {
+        return dataSource.snapshot()
+    }
+}
+
+// MARK: UICollectionViewDelegate
+extension UserListCollectionViewManager {
+    func scrollViewWillBeginDragging(_: UIScrollView) {
+        collectionView.endEditing(true)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        let snapshot = dataSource.snapshot()
+        let section = snapshot.sectionIdentifiers[indexPath.section]
+        let itemCount = snapshot.numberOfItems(inSection: section)
+        if indexPath.item == itemCount - 1 {
+            delegate.loadNextPageIfExist()
+        }
+    }
+
+    func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let snapshot = dataSource.snapshot()
+        let section = snapshot.sectionIdentifiers[indexPath.section]
+        let itemIdentifier = snapshot.itemIdentifiers(inSection: section)[indexPath.item]
+        switch itemIdentifier {
+        case .listItemCell(let data):
+            delegate.actionUserDetail(with: data)
+        default:
+            break
+        }
+    }
+}
