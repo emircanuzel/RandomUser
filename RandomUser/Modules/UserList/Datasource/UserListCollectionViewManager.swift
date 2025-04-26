@@ -17,6 +17,7 @@ class UserListCollectionViewManager: NSObject, UICollectionViewDelegate {
     private lazy var listLayout = UserListLayoutMaker(dataSource: dataSource)
     var currentUsers: [UserListCellPresentationModel] = []
     private var deletedUsers: Set<UserListCellPresentationModel> = []
+    private var isLoading: Bool = false
 
     init(
         collectionView: UICollectionView,
@@ -31,6 +32,10 @@ class UserListCollectionViewManager: NSObject, UICollectionViewDelegate {
     }
     
     func createSnapshot(with response: UserListResponse) {
+        defer {
+            isLoading = false
+            updateSnapshot()
+        }
         var snapshot = UserListSnapshot()
         manageResponse(on: &snapshot, using: response)
         dataSource.apply(snapshot)
@@ -49,6 +54,11 @@ class UserListCollectionViewManager: NSObject, UICollectionViewDelegate {
             snapshot.appendSections([.sectionList])
         }
         snapshot.appendItems(userItems, toSection: .sectionList)
+        
+        if isLoading {
+            snapshot.appendItems([.loadingCell], toSection: .sectionList)
+        }
+        
         dataSource.apply(snapshot)
     }
 
@@ -61,6 +71,10 @@ class UserListCollectionViewManager: NSObject, UICollectionViewDelegate {
         }
         snapshot.appendItems(userItems, toSection: .sectionList)
         dataSource.apply(snapshot)
+    }
+
+    func setIsLoading(_ value: Bool) {
+        isLoading = value
     }
 }
 
@@ -120,9 +134,15 @@ extension UserListCollectionViewManager {
         let snapshot = dataSource.snapshot()
         let section = snapshot.sectionIdentifiers[indexPath.section]
         let itemCount = snapshot.numberOfItems(inSection: section)
-        if indexPath.item == itemCount - 1 {
-            delegate.loadNextPageIfExist()
+        if indexPath.item == itemCount - 1 && !isLoading {
+            loadNextPage()
         }
+    }
+
+    private func loadNextPage() {
+        isLoading = true
+        updateSnapshot()
+        delegate.loadNextPageIfExist()
     }
 
     func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {

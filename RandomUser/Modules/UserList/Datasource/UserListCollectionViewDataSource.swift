@@ -19,6 +19,10 @@ final class UserListCollectionViewDataSource: UserListDataSource {
                 cell.delegate = delegate
                 cell.bind(with: presentationModel)
                 return cell
+            case .loadingCell:
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: LoadingCollectionViewCell.reuseIdentifier, for: indexPath) as! LoadingCollectionViewCell
+                cell.startAnimating()
+                return cell
             }
         }
         registerCells(on: collectionView)
@@ -26,5 +30,6 @@ final class UserListCollectionViewDataSource: UserListDataSource {
 
     private func registerCells(on collectionView: UICollectionView) {
         collectionView.registerClass(UserCollectionViewCell.self)
+        collectionView.registerClass(LoadingCollectionViewCell.self)
     }
 }

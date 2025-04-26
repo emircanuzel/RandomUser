@@ -18,6 +18,7 @@ enum UserListSection: Hashable {
 
 enum UserListCellType: Hashable {
     case listItemCell(UserListCellPresentationModel)
+    case loadingCell
 }
 
 // MARK: - Type Alias

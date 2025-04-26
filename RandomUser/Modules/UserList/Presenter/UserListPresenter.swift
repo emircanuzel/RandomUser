@@ -61,6 +61,8 @@ final class UserListPresenter: UserListViewPresentation {
             } else {
                 view?.showError(message: "Something went wrong. Please try again.")
             }
+            collectionViewManager?.setIsLoading(false)
+            collectionViewManager?.updateSnapshot()
         }
     }
 
