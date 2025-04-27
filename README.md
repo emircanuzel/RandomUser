@@ -58,8 +58,6 @@ In addition, the UI layer heavily relies on **Diffable Data Source** and **Compo
 | **Swift Collections - OrderedSet** | Used via Swift Package Manager for efficient duplicate removal while preserving order. |
 | **SPM Integration**             | [Swift Collections](https://github.com/apple/swift-collections) added for `OrderedSet` usage. |
 
-> ⚡ *Note:* Actor model and factory pattern were evaluated during development but not used in the final version of the project.
-
 ---
 
 ## How to Run
