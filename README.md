@@ -29,6 +29,7 @@ It implements key features such as infinite scrolling, user deletion, search fun
 - ✅ Modular architecture (VIPER)  
 - ✅ Smooth animations using Diffable Data Source  
 - ✅ Modern list layouts using Compositional Layout  
+- ✅ Show alert to user on network/server errors
 - ✅ Unit tests for critical parts (Network, List, Search, Delete, Persistence)
 
 ---
@@ -122,12 +123,8 @@ RandomUser/
 - The list management is powered by **Diffable Data Source**, enabling smooth animations, atomic snapshot updates, and avoiding duplicates naturally.  
 - **Compositional Layout** is used for modern, highly customizable and flexible list layouts across both UserList and UserDetail screens.  
 - Data persistence across application launches is handled using **UserDefaults** through a custom **UserPersistenceManager**.  
+- In case of network or server errors, the app gracefully shows an alert to the user to inform them about the issue.
 - No Storyboards were used: the entire UI is built programmatically using **UIKit**.
 - Infinite scrolling and loading indicators are designed to provide a seamless and reactive user experience.
 - Great attention has been paid to code modularization, clarity, and extendability to real-world scaling.
 
----
-
-## License
-
-This project is licensed under the **MIT License**.
