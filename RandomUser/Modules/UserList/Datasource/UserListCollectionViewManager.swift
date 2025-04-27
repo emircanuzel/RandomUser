@@ -18,6 +18,7 @@ class UserListCollectionViewManager: NSObject, UICollectionViewDelegate {
     var currentUsers: [UserListCellPresentationModel] = []
     private var deletedUsers: Set<UserListCellPresentationModel> = []
     private var isLoading: Bool = false
+    private var isSearching: Bool = false
 
     init(
         collectionView: UICollectionView,
@@ -47,6 +48,7 @@ class UserListCollectionViewManager: NSObject, UICollectionViewDelegate {
     }
 
     func updateSnapshot() {
+        isSearching = false
         var snapshot = UserListSnapshot()
         let userItems: [UserListCellType] = currentUsers.map({ .listItemCell($0) })
         if snapshot.sectionIdentifiers.isEmpty {
@@ -63,6 +65,7 @@ class UserListCollectionViewManager: NSObject, UICollectionViewDelegate {
 
     func searchUser(filteredUsers: [UserListCellPresentationModel]?) {
         guard let filteredUsers, !filteredUsers.isEmpty else { return }
+        isSearching = true
         var snapshot = UserListSnapshot()
         let userItems: [UserListCellType] = filteredUsers.map({ .listItemCell($0) })
         if snapshot.sectionIdentifiers.isEmpty {
@@ -144,7 +147,7 @@ extension UserListCollectionViewManager {
         let snapshot = dataSource.snapshot()
         let section = snapshot.sectionIdentifiers[indexPath.section]
         let itemCount = snapshot.numberOfItems(inSection: section)
-        if indexPath.item == itemCount - 1 && !isLoading {
+        if indexPath.item == itemCount - 1 && !isLoading && !isSearching {
             loadNextPage()
         }
     }

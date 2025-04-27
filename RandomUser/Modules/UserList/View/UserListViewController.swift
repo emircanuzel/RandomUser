@@ -81,6 +81,10 @@ extension UserListViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         presenter.actionSearchBar(text: searchText)
     }
+
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        presenter.actionSearchBar(text: "")
+    }
 }
 
 
