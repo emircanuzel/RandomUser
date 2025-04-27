@@ -30,20 +30,22 @@ final class UserListCollectionViewManagerTests: XCTestCase {
         super.tearDown()
     }
     
-    func test_createSnapshot_ShouldNotAddDuplicateUsers() {
+    func test_createSnapshot_ShouldNotAddDuplicateUsers() async {
         // Given
         let user = makeDummyUser(firstName: "Emircan", lastName: "Uzel", email: "emircan@example.com")
         let response = UserListResponse(results: [user, user])
         
         // When
-        sut.createSnapshot(with: response)
+        await MainActor.run {
+            sut.createSnapshot(with: response)
+        }
         
         // Then
         let snapshot = sut.currentSnapshot()
         XCTAssertEqual(snapshot.numberOfItems, 1, "Duplicate users should not be added to the snapshot.")
     }
 
-    func test_createSnapshot_ShouldAddUsersToDataSource() {
+    func test_createSnapshot_ShouldAddUsersToDataSource() async {
         // Given
         let users = [
             makeDummyUser(firstName: "Emircan", lastName: "Uzel", email: "emircan@example.com"),
@@ -52,7 +54,9 @@ final class UserListCollectionViewManagerTests: XCTestCase {
         let response = UserListResponse(results: users)
 
         // When
-        sut.createSnapshot(with: response)
+        await MainActor.run {
+            sut.createSnapshot(with: response)
+        }
         
         // Then
         let snapshot = sut.currentSnapshot()
@@ -87,7 +91,7 @@ final class UserListCollectionViewManagerTests: XCTestCase {
         XCTAssertEqual(snapshot.numberOfItems, 0, "Deleted user should not appear again even after pagination.")
     }
     
-    func test_updateSnapshot_ShouldRecreateSnapshotFromCurrentUsers() {
+    func test_updateSnapshot_ShouldRecreateSnapshotFromCurrentUsers() async {
         // Given
         let user1 = makeDummyUser(firstName: "User1", lastName: "Test", email: "user1@example.com")
         let user2 = makeDummyUser(firstName: "User2", lastName: "Test", email: "user2@example.com")
@@ -97,21 +101,25 @@ final class UserListCollectionViewManagerTests: XCTestCase {
         ]
         
         // When
-        sut.updateSnapshot()
+        await MainActor.run {
+            sut.updateSnapshot()
+        }
         
         // Then
         let snapshot = sut.currentSnapshot()
         XCTAssertEqual(snapshot.numberOfItems, 2)
     }
     
-    func test_searchUser_ShouldCreateFilteredSnapshot() {
+    func test_searchUser_ShouldCreateFilteredSnapshot() async {
         // Given
         let user1 = makeDummyUser(firstName: "Search", lastName: "Me", email: "search@example.com")
         let user2 = makeDummyUser(firstName: "No", lastName: "Match", email: "nomatch@example.com")
         let filteredUser = UserListCellPresentationModel(model: user1)
         
         // When
-        sut.searchUser(filteredUsers: [filteredUser])
+        await MainActor.run {
+            sut.searchUser(filteredUsers: [filteredUser])
+        }
         
         // Then
         let snapshot = sut.currentSnapshot()

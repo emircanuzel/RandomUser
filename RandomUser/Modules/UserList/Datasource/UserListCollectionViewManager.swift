@@ -33,12 +33,11 @@ class UserListCollectionViewManager: NSObject, UICollectionViewDelegate {
     
     func createSnapshot(with response: UserListResponse) {
         defer {
-            isLoading = false
-            updateSnapshot()
+            resetLoadingAndUpdateSnapshot()
         }
         var snapshot = UserListSnapshot()
         manageResponse(on: &snapshot, using: response)
-        dataSource.apply(snapshot)
+        applySnapshot(snapshot)
     }
 
     func deleteUser(_ user: UserListCellPresentationModel) {
@@ -59,7 +58,7 @@ class UserListCollectionViewManager: NSObject, UICollectionViewDelegate {
             snapshot.appendItems([.loadingCell], toSection: .sectionList)
         }
         
-        dataSource.apply(snapshot)
+        applySnapshot(snapshot)
     }
 
     func searchUser(filteredUsers: [UserListCellPresentationModel]?) {
@@ -70,11 +69,16 @@ class UserListCollectionViewManager: NSObject, UICollectionViewDelegate {
             snapshot.appendSections([.sectionList])
         }
         snapshot.appendItems(userItems, toSection: .sectionList)
-        dataSource.apply(snapshot)
+        applySnapshot(snapshot)
     }
 
     func setIsLoading(_ value: Bool) {
         isLoading = value
+    }
+
+    private func resetLoadingAndUpdateSnapshot() {
+        isLoading = false
+        updateSnapshot()
     }
 }
 
@@ -121,6 +125,12 @@ extension UserListCollectionViewManager {
     
     func currentSnapshot() -> UserListSnapshot {
         return dataSource.snapshot()
+    }
+
+    private func applySnapshot(_ snapshot: UserListSnapshot) {
+        DispatchQueue.main.async {
+            self.dataSource.apply(snapshot, animatingDifferences: true)
+        }
     }
 }
 

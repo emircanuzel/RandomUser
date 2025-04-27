@@ -116,6 +116,7 @@ final class UserListPresenterTests: XCTestCase {
 
 private final class MockUserListView: UserListView {
     var collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewLayout())
+    func showError(message: String) { /*No action*/ }
 }
 
 private final class MockUserListInteractor: UserListInteractorProtocol {
@@ -127,10 +128,7 @@ private final class MockUserListInteractor: UserListInteractorProtocol {
         expectation?.fulfill()
         return UserListResponse(results: [])
     }
-
-    func deleteUser(_ user: RandomUser.UserListCellPresentationModel) {
-        //No action
-    }
+    func deleteUser(_ user: RandomUser.UserListCellPresentationModel) { /*No action*/ }
 }
 
 private final class MockUserListRouter: UserListRouting {
