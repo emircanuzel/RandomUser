@@ -117,6 +117,7 @@ final class UserListPresenterTests: XCTestCase {
 private final class MockUserListView: UserListView {
     var collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewLayout())
     func showError(message: String) { /*No action*/ }
+    func endPullToRefresh() { /*No action*/ }
 }
 
 private final class MockUserListInteractor: UserListInteractorProtocol {
