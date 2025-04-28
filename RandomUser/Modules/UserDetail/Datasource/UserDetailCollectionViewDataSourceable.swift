@@ -24,7 +24,5 @@ enum UserDetailCellType: Hashable {
     case locationCell(LocationModel)
 }
 
-// MARK: - Type Alias
-
 typealias UserDetailDataSource = UICollectionViewDiffableDataSource<UserDetailSection, UserDetailCellType>
 typealias UserDetailSnapshot = NSDiffableDataSourceSnapshot<UserDetailSection, UserDetailCellType>

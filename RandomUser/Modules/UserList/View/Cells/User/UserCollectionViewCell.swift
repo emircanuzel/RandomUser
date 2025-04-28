@@ -9,9 +9,6 @@ import Foundation
 import UIKit
 
 final class UserCollectionViewCell: UICollectionViewCell {
-    
-    // MARK: - Delegate
-
     weak var delegate: UserCollectionViewCellDelegate?
     var model: UserListCellPresentationModel?
 
@@ -56,7 +53,7 @@ final class UserCollectionViewCell: UICollectionViewCell {
 
     let deleteButton: UIButton = {
         let button = UIButton(type: .system)
-        let image = UIImage(systemName: "trash") // SF Symbol
+        let image = UIImage(systemName: "trash")
         button.setImage(image, for: .normal)
         button.tintColor = .red
         button.translatesAutoresizingMaskIntoConstraints = false

@@ -21,8 +21,6 @@ enum UserListCellType: Hashable {
     case loadingCell
 }
 
-// MARK: - Type Alias
-
 typealias UserListDataSource = UICollectionViewDiffableDataSource<UserListSection, UserListCellType>
 typealias UserListSnapshot = NSDiffableDataSourceSnapshot<UserListSection, UserListCellType>
 

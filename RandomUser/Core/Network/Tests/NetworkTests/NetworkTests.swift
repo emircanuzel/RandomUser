@@ -1,8 +1,6 @@
 import XCTest
 @testable import NetworkLayer
 
-// MARK: - Test Doubles
-
 struct MockDecodable: Codable, Equatable {
     let id: Int
     let name: String
@@ -68,8 +66,6 @@ final class NetworkServiceTests: XCTestCase {
         mockURLSession = nil
         super.tearDown()
     }
-    
-    // MARK: - Request Success Cases
     
     func test_request_whenSuccessful_shouldReturnDecodedObject() async {
         // Given

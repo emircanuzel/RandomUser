@@ -9,7 +9,6 @@ import Foundation
 import UIKit
 
 final class UserListViewController: UIViewController, UserListView {
-    // MARK: Private
     private let presenter: UserListViewPresentation
     
     // MARK: - View Properties

@@ -9,7 +9,6 @@ import Foundation
 import UIKit
 
 final class UserDetailViewController: UIViewController, UserDetailView {
-    // MARK: Private
     private let presenter: UserDetailViewPresentation
     
     // MARK: - View Properties
