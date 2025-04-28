@@ -18,6 +18,7 @@ final class UserListViewController: UIViewController, UserListView {
     )
 
     private var searchController: UISearchController
+    private let refreshControl = UIRefreshControl()
     
     init(presenter: some UserListViewPresentation) {
         self.presenter = presenter
@@ -40,6 +41,7 @@ final class UserListViewController: UIViewController, UserListView {
     private func setUpUI() {
         setupCollectionView()
         setupSearchController()
+        setupRefreshControl()
     }
 
     private func setupCollectionView() {
@@ -57,6 +59,7 @@ final class UserListViewController: UIViewController, UserListView {
         collectionView.bouncesZoom = false
         collectionView.showsVerticalScrollIndicator = false
         collectionView.showsHorizontalScrollIndicator = false
+        collectionView.refreshControl = refreshControl
     }
 
     private func setupSearchController() {
@@ -66,6 +69,20 @@ final class UserListViewController: UIViewController, UserListView {
         navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
         definesPresentationContext = true
+    }
+
+    private func setupRefreshControl() {
+        refreshControl.addTarget(self,
+                                 action: #selector(handleRefresh),
+                                 for: .valueChanged)
+    }
+
+    @objc private func handleRefresh() {
+        presenter.refreshUsers()
+    }
+
+    func endPullToRefresh() {
+        refreshControl.endRefreshing()
     }
 
     @MainActor
@@ -85,5 +102,3 @@ extension UserListViewController: UISearchBarDelegate {
         presenter.actionSearchBar(text: "")
     }
 }
-
-

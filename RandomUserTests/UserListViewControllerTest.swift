@@ -47,6 +47,7 @@ private final class MockUserListPresenter: UserListViewPresentation {
     
     var isViewDidLoadCalled = false
     var searchTextPassed: String?
+    var isrefreshUsersCalled = false
     
     func viewDidLoad() {
         isViewDidLoadCalled = true
@@ -54,6 +55,9 @@ private final class MockUserListPresenter: UserListViewPresentation {
     
     func actionSearchBar(text: String) {
         searchTextPassed = text
+    }
+    func refreshUsers() {
+        isrefreshUsersCalled = true
     }
 }
 
