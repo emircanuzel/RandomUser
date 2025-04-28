@@ -83,6 +83,12 @@ class UserListCollectionViewManager: NSObject, UICollectionViewDelegate {
         isLoading = false
         updateSnapshot()
     }
+
+    func refreshUsers() {
+        currentUsers.removeAll()
+        isLoading = false
+        updateSnapshot()
+    }
 }
 
 // MARK: Generating Snapshot

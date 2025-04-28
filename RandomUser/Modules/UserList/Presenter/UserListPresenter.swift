@@ -82,7 +82,14 @@ final class UserListPresenter: UserListViewPresentation {
             
             return nameMatches || emailMatches
         }
-        collectionViewManager?.searchUser(filteredUsers: filteredUsers) 
+        collectionViewManager?.searchUser(filteredUsers: filteredUsers)
+    }
+
+    func refreshUsers() {
+        currentPage = 1
+        collectionViewManager?.refreshUsers()
+        getUserList()
+        view?.endPullToRefresh()
     }
 }
 

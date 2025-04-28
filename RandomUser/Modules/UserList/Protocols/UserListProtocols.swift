@@ -14,6 +14,7 @@ protocol UserListView{
     var collectionView: UICollectionView { get }
     @MainActor
     func showError(message: String)
+    func endPullToRefresh()
 }
 
 // MARK: - UserListViewPresentation
@@ -23,6 +24,7 @@ protocol UserListViewPresentation: AnyObject {
 
     func viewDidLoad()
     func actionSearchBar(text: String)
+    func refreshUsers()
 }
 
 // MARK: - UserListInteractorProtocol
